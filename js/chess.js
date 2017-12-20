@@ -131,13 +131,9 @@ function isMoveAllowed(obj, x, y) {
   if (obj.name === PAWN) isAllowed = checkPawnRules(obj, x, y);
   if (obj.name === ROOK) isAllowed = checkRookRules(obj, x, y);
   if (obj.name === KNIGHT) isAllowed = checkKnightRules(obj, x, y);
-
-  // ********************************************
-  // **** TODO: add more rules for other pieces
-  // *********************************************
   if (obj.name === BISHOP) isAllowed = checkBishopRules(obj, x, y);
-  if (obj.name === QUEEN) return false;
-  if (obj.name === KING) return false;
+  if (obj.name === QUEEN) isAllowed = checkQueenRules(obj, x, y);
+  if (obj.name === KING) isAllowed = checkKingRules(obj, x, y);
   
   return isAllowed;
 }
@@ -274,6 +270,25 @@ function getCoordOperator(start, end) {
 var operation = {
   sum: function(a, b) { return a + b },
   sub: function(a, b) { return a - b }
+}
+
+function checkQueenRules(obj, x, y) {
+  if (checkRookRules(obj, x, y) || checkBishopRules(obj, x, y)) return true;
+  
+  return false;
+}
+
+function checkKingRules(obj, x, y) {
+  var xDiff = Math.abs(obj.x - x);
+  var yDiff = Math.abs(obj.y - y);
+  
+  // can not jump to the same place
+  if (obj.x === x && obj.y === y) return false;
+  
+  // no more than 1 space
+  if (xDiff <= 1 && yDiff <= 1) return true;
+  
+  return false;
 }
 
 function drag(event) {
