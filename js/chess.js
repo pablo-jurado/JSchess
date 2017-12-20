@@ -236,10 +236,44 @@ function checkKnightRules(initial, x, y) {
   return false;
 }
 
-function checkBishopRules(obj, x, y) {
+function checkBishopRules(initial, x, y) {
   var collisionValue = checkCollision(x, y);
-  console.log(collisionValue.name);
+  
+  var xDiff = Math.abs(initial.x - x);
+  var yDiff = Math.abs(initial.y - y);
+  
+  // only moves diagonal
+  if ( (xDiff === yDiff) && !collisionValue ||
+       (collisionValue && collisionValue.color !== initial.color) ) {
+    
+    // TODO: bishop can not jump pieces    
+    var spacesLength = xDiff - 1;
+    // check if the movement is positive or negative
+    var xOperator = getCoordOperator(initial.x, x);
+    var yOperator = getCoordOperator(initial.y, y);
+    
+    // checks path for collision   
+    for (var i = 1; i <= spacesLength; i++ ) {
+      var xResult = operation[xOperator](initial.x, i);
+      var yResult = operation[yOperator](initial.y, i);
+      
+      if (checkCollision(xResult, yResult)) return false;
+    }
+    
+    return true; 
+  }
+  
   return false;
+}
+
+function getCoordOperator(start, end) {
+  if (start < end) return 'sum';
+  return 'sub'
+}
+
+var operation = {
+  sum: function(a, b) { return a + b },
+  sub: function(a, b) { return a - b }
 }
 
 function drag(event) {
@@ -375,5 +409,3 @@ var game = {
 }
 
 game.init();
-
-
