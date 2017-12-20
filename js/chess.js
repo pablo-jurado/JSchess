@@ -129,13 +129,13 @@ function isMoveAllowed(obj, x, y) {
   var isAllowed = false;
   
   if (obj.name === PAWN) isAllowed = checkPawnRules(obj, x, y);
-  
+  if (obj.name === ROOK) isAllowed = checkRookRules(obj, x, y);
+  if (obj.name === KNIGHT) isAllowed = checkKnightRules(obj, x, y);
+
   // ********************************************
   // **** TODO: add more rules for other pieces
   // *********************************************
-  if (obj.name === ROOK) isAllowed = checkRookRules(obj, x, y);
-  if (obj.name === KNIGHT) return false;
-  if (obj.name === BISHOP) return false;
+  if (obj.name === BISHOP) isAllowed = checkBishopRules(obj, x, y);
   if (obj.name === QUEEN) return false;
   if (obj.name === KING) return false;
   
@@ -186,6 +186,7 @@ function checkPawnRules (obj, x, y) {
   return result;
 }
 
+// todo
 function checkRookRules (obj, x, y) {
   var dest = { x: x, y: y };
   var collisionValue = checkCollision(x, y);
@@ -214,6 +215,30 @@ function checkRookRules (obj, x, y) {
   
   if (collisionValue && collisionValue.color !== ownColor || !collisionValue) return true;
   
+  return false;
+}
+
+function checkKnightRules(initial, x, y) {
+  var collisionValue = checkCollision(x, y);
+  var ownColor = initial.color;
+  
+  if (collisionValue && collisionValue.color !== ownColor || !collisionValue) {
+    if ( (y === initial.y + 2 && x === initial.x + 1) ||
+         (y === initial.y + 2 && x === initial.x - 1) ||
+         (y === initial.y - 2 && x === initial.x + 1) ||
+         (y === initial.y - 2 && x === initial.x - 1) ) return true;
+    
+    if ( (x === initial.x + 2 && y === initial.y + 1) ||
+         (x === initial.x + 2 && y === initial.y - 1) ||
+         (x === initial.x - 2 && y === initial.y + 1) ||
+         (x === initial.x - 2 && y === initial.y - 1) ) return true;  
+  }
+  return false;
+}
+
+function checkBishopRules(obj, x, y) {
+  var collisionValue = checkCollision(x, y);
+  console.log(collisionValue.name);
   return false;
 }
 
@@ -350,3 +375,5 @@ var game = {
 }
 
 game.init();
+
+
