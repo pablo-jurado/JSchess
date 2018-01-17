@@ -69,28 +69,28 @@ function renderBoard() {
         id = 'data-piece=' + element.piece.id;
         player = 'data-player=' + color;
       }
-      
-      row += 
-        '<div data-x=' + idx + ' class="' + classValue + '">' +          
-            buildPiece(pieceName, color, id , player) + 
+
+      row +=
+        '<div data-x=' + idx + ' class="' + classValue + '">' +
+            buildPiece(pieceName, color, id , player) +
         '</div>';
     })
     return acc += '<div data-y=' + index + ' class="row">' + row + '</div>';
-  }, '');  
+  }, '');
   BOARD_DOM.innerHTML = boardHTML;
 }
 
 function buildPiece(name, color, id , player) {
   value = '';
   if (!name) return value;
-  
+
   if (name === PAWN) value = color === BLACK ? B_PAWN : W_PAWN;
   if (name === ROOK) value = color === BLACK ? B_ROOK : W_ROOK;
   if (name === KNIGHT) value = color === BLACK ? B_KNIGHT : W_KNIGHT;
   if (name === BISHOP) value = color === BLACK ? B_BISHOP : W_BISHOP;
   if (name === QUEEN) value = color === BLACK ? B_QUEEN : W_QUEEN;
   if (name === KING) value = color === BLACK ? B_KING : W_KING;
-  
+
   return '<div ' + id + ' ' + player + ' class="game-piece">' + value + '</div>';
 }
 
@@ -115,7 +115,7 @@ GamePiece.prototype.update = function(x, y) {
     this.y = y;
     this.move();
     game.render();
-    game.updateTurn(); 
+    game.updateTurn();
   } else {
     this.goBack();
   }
@@ -127,17 +127,17 @@ GamePiece.prototype.goBack = function() {
 
 function isMoveAllowed(obj, x, y) {
   var isAllowed = false;
-  
+
   if (obj.name === PAWN) isAllowed = checkPawnRules(obj, x, y);
   if (obj.name === ROOK) isAllowed = checkRookRules(obj, x, y);
   if (obj.name === KNIGHT) isAllowed = checkKnightRules(obj, x, y);
   if (obj.name === BISHOP) isAllowed = checkBishopRules(obj, x, y);
   if (obj.name === QUEEN) isAllowed = checkQueenRules(obj, x, y);
   if (obj.name === KING) isAllowed = checkKingRules(obj, x, y);
-  
+
   return isAllowed;
 }
-
+// FIX TODO: pawn can't jump own players pieces
 function checkPawnRules (obj, x, y) {
   var initialY = obj.color === BLACK ? 1 : 6;
   var collisionValue = checkCollision(x, y);
@@ -187,20 +187,20 @@ function checkRookRules (obj, x, y) {
   var dest = { x: x, y: y };
   var collisionValue = checkCollision(x, y);
   var ownColor = obj.color;
-  
+
   // avoid moving in the same spot
   if (x === obj.x && y === obj.y) return false;
 
   // rook cant\'t move diagonal
   if (x !== obj.x && y !== obj.y) return false;
-    
-  // checks which way is moving 
+
+  // checks which way is moving
   var letter = obj.x === x ? 'y' : 'x';
-   
+
   // can not jump pieces
   var min = Math.min(obj[letter], dest[letter]) + 1;
   var max = Math.max(obj[letter], dest[letter]) - 1;
-  
+
   for (var i = min; i <= max; i++) {
     if (letter === 'y') {
       if (checkCollision(x, i)) return false;
@@ -208,57 +208,57 @@ function checkRookRules (obj, x, y) {
       if (checkCollision(i, y)) return false;
     }
   }
-  
+
   if (collisionValue && collisionValue.color !== ownColor || !collisionValue) return true;
-  
+
   return false;
 }
 
 function checkKnightRules(initial, x, y) {
   var collisionValue = checkCollision(x, y);
   var ownColor = initial.color;
-  
+
   if (collisionValue && collisionValue.color !== ownColor || !collisionValue) {
     if ( (y === initial.y + 2 && x === initial.x + 1) ||
          (y === initial.y + 2 && x === initial.x - 1) ||
          (y === initial.y - 2 && x === initial.x + 1) ||
          (y === initial.y - 2 && x === initial.x - 1) ) return true;
-    
+
     if ( (x === initial.x + 2 && y === initial.y + 1) ||
          (x === initial.x + 2 && y === initial.y - 1) ||
          (x === initial.x - 2 && y === initial.y + 1) ||
-         (x === initial.x - 2 && y === initial.y - 1) ) return true;  
+         (x === initial.x - 2 && y === initial.y - 1) ) return true;
   }
   return false;
 }
 
 function checkBishopRules(initial, x, y) {
   var collisionValue = checkCollision(x, y);
-  
+
   var xDiff = Math.abs(initial.x - x);
   var yDiff = Math.abs(initial.y - y);
-  
+
   // only moves diagonal
   if ( (xDiff === yDiff) && !collisionValue ||
        (collisionValue && collisionValue.color !== initial.color) ) {
-    
-    // TODO: bishop can not jump pieces    
+
+    // TODO: bishop can not jump pieces
     var spacesLength = xDiff - 1;
     // check if the movement is positive or negative
     var xOperator = getCoordOperator(initial.x, x);
     var yOperator = getCoordOperator(initial.y, y);
-    
-    // checks path for collision   
+
+    // checks path for collision
     for (var i = 1; i <= spacesLength; i++ ) {
       var xResult = operation[xOperator](initial.x, i);
       var yResult = operation[yOperator](initial.y, i);
-      
+
       if (checkCollision(xResult, yResult)) return false;
     }
-    
-    return true; 
+
+    return true;
   }
-  
+
   return false;
 }
 
@@ -274,20 +274,20 @@ var operation = {
 
 function checkQueenRules(obj, x, y) {
   if (checkRookRules(obj, x, y) || checkBishopRules(obj, x, y)) return true;
-  
+
   return false;
 }
 
 function checkKingRules(obj, x, y) {
   var xDiff = Math.abs(obj.x - x);
   var yDiff = Math.abs(obj.y - y);
-  
+
   // can not jump to the same place
   if (obj.x === x && obj.y === y) return false;
-  
+
   // no more than 1 space
   if (xDiff <= 1 && yDiff <= 1) return true;
-  
+
   return false;
 }
 
@@ -297,23 +297,23 @@ function drag(event) {
     var width = element.offsetWidth / 2;
     var height = element.offsetHeight / 2;
     var player = element.dataset.player;
-    
+
     var turn = game.turn ? BLACK : WHITE;
     // checks if player is draging his own pieces
     if (player === turn) isMoving = true;
-    
+
     element.addEventListener('mousemove', function(e) {
       if (isMoving) {
         var x = e.clientX - width;
         var y = e.clientY - height;
-        
+
         var board = BOARD_DOM.getBoundingClientRect();
         var coordX = x - board.x;
         var coordY = y - board.y;
-        
-        // limits of the board        
+
+        // limits of the board
         if (coordX < 0 || coordX > 375 || coordY < 0 || coordY > 375 ) return
-                
+
         var position = 'left:' + x + 'px;top:' + y + 'px; z-index: 1;';
         element.setAttribute('style', position);
         element.classList.add('active');
@@ -339,40 +339,40 @@ function drop(event) {
 
 function getCoordinates(x, y) {
   var board = BOARD_DOM.getBoundingClientRect();
-  
-  var coordX = x - board.x - BOARD_BORDER; 
+
+  var coordX = x - board.x - BOARD_BORDER;
   var coordY = y - board.y - BOARD_BORDER;
-  
+
   const boardSize = ROW * SQUARE_SIZE;
   var resultX = Math.floor(coordX / boardSize * ROW);
   var resultY = Math.floor(coordY / boardSize * ROW);
-  
+
   return { x: resultX, y: resultY };
 }
 
 function updateBoard(element, coord) {
   var x = coord.x;
   var y = coord.y;
-  var id = element.dataset.piece;  
+  var id = element.dataset.piece;
   var piece = game.pieces[id];
-    
+
   // erase piece from initial coordinates
   game.board[piece.y][piece.x].piece = null;
   // update piece
   piece.update(x, y);
-} 
+}
 
 function checkCollision(x, y) {
-  return (game.board[y][x].piece) 
+  return (game.board[y][x].piece)
 }
 
 function updateTurn() {
   this.turn = !this.turn;
-  
+
   var classValue = this.turn ? 'player-black' : 'player-white';
   var player = this.turn ? 'Black' : 'White';
   var feedBack = '<div class="' + classValue + '">Next: ' + player + '</div>';
-  
+
   turnDom.innerHTML = feedBack;
 }
 
@@ -399,7 +399,7 @@ var game = {
     for (var i = 0; i < 8; i++) {
       new GamePiece(i, 6, PAWN, WHITE, i);
     }
-    
+
     new GamePiece(0, 7, ROOK, WHITE, 1);
     new GamePiece(7, 7, ROOK, WHITE, 2);
     new GamePiece(1, 7, KNIGHT, WHITE, 1);
@@ -408,7 +408,7 @@ var game = {
     new GamePiece(5, 7, BISHOP, WHITE, 2);
     new GamePiece(3, 7, QUEEN, WHITE, 1);
     new GamePiece(4, 7, KING, WHITE, 1);
-    
+
     new GamePiece(0, 0, ROOK, BLACK, 1);
     new GamePiece(7, 0, ROOK, BLACK, 2);
     new GamePiece(1, 0, KNIGHT, BLACK, 1);
@@ -420,7 +420,7 @@ var game = {
 
     this.updateTurn();
     this.render();
-  } 
+  }
 }
 
 game.init();
