@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html ng-app="chess" lang="">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -14,16 +14,21 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
     </head>
-    <body ng-app>
+    <body ng-controller="chessController">
         <!--[if lte IE 9]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
         <![endif]-->
-        <div>Hello {{ 'n' + 'g' }}!</div>
 
-        <!-- <div id="turn" class="player"></div>
+        <!-- <div>Hello {{ 'n' + 'g' + row }}!</div> -->
+
+        <div id="turn" class="player"></div>
         <div class="wrapper">
-          <div id="app"></div>
-        </div> -->
+          <div class="app">
+            <div ng-repeat="row in board" class="row">
+              <div ng-repeat="piece in row" ng-class="piece.background ? 'grey' : 'white' "></div>
+            </div>
+          </div>
+        </div>
 
       <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
       <script src="js/main.js"></script>

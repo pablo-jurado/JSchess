@@ -4,7 +4,7 @@
   justify-content: center;
 }
 
-#app {
+.app {
   display: inline-block;
   border: solid 10px #424242;
   box-shadow: 0 0 40px grey;
