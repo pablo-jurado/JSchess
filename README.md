@@ -6,6 +6,6 @@ This is a JavaScript chess game that creates the GUI and handles the basic logic
 
 [Link](https://pablo-jurado.github.io/JSchess/)
 
-> NOTE: Work in progress. Only the Pawns are moving, need to work on other pieces.
+> NOTE: Work in progress.
 
 <img src="ScreenShot.png" alt="Chess game Screen shot">
