@@ -81,7 +81,7 @@ function renderBoard() {
 }
 
 function buildPiece(name, color, id , player) {
-  value = '';
+  var value = '';
   if (!name) return value;
 
   if (name === PAWN) value = color === BLACK ? B_PAWN : W_PAWN;
@@ -219,7 +219,7 @@ function checkKnightRules(initial, x, y) {
   var ownColor = initial.color;
 
   if (collisionValue && collisionValue.color !== ownColor || !collisionValue) {
-    if ( (y === initial.y + 2 && x === initial.x + 1) ||
+    if ((y === initial.y + 2 && x === initial.x + 1) ||
          (y === initial.y + 2 && x === initial.x - 1) ||
          (y === initial.y - 2 && x === initial.x + 1) ||
          (y === initial.y - 2 && x === initial.x - 1) ) return true;
